@@ -115,9 +115,8 @@ def main():
             homework = check_response(response)
             if homework:
                 actual_homework = homework[0]
-                lesson_name = actual_homework['lesson_name']
                 homework_status = parse_status(actual_homework)
-                send_message(bot, f'{lesson_name} \n{homework_status}')
+                send_message(bot, f'Новый статус домашки - {homework_status}')
             else:
                 send_message(bot, 'Нет нового статуса домашки')
 
@@ -125,6 +124,7 @@ def main():
             message = f'Сбой в работе программы: {error}'
             logger.error(message)
             if message != last_error:
+                last_error = error
                 send_message(bot, message)
         finally:
             time.sleep(RETRY_PERIOD)
