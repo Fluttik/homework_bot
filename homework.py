@@ -111,7 +111,7 @@ def main():
     while True:
         try:
             response = get_api_answer(timestamp)
-            timestamp = response.get('curret_date')
+            timestamp = response.get('current_date')
             homework = check_response(response)
             if homework:
                 actual_homework = homework[0]
@@ -125,7 +125,7 @@ def main():
             message = f'Сбой в работе программы: {error}'
             logger.error(message)
             if message != last_error:
-                send_message(bot, HOMEWORK_VERDICTS)
+                send_message(bot, message)
         finally:
             time.sleep(RETRY_PERIOD)
 
