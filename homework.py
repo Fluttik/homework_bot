@@ -31,7 +31,6 @@ logging.basicConfig(
     format='%(asctime)s, %(levelname)s, %(message)s'
 )
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 formatter = logging.Formatter(
@@ -50,6 +49,7 @@ def check_tokens():
 def send_message(bot, message):
     """Отправка сообщения в телеграмм."""
     try:
+        logger.debug('Начата попытка отправки сообщения')
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.debug('Сообщение отправленно')
     except telegram.TelegramError:
@@ -88,6 +88,7 @@ def parse_status(homework):
     """Извлекает из информации о конкретной домашней работе.
     статус этой работы
     """
+    logger.debug('Начато извлечение информации')
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
     if homework_status is None:
@@ -108,6 +109,7 @@ def main():
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = int(time.time())
     last_error = ''
+    previous_homework_status = ''
     while True:
         try:
             response = get_api_answer(timestamp)
@@ -116,9 +118,19 @@ def main():
             if homework:
                 actual_homework = homework[0]
                 homework_status = parse_status(actual_homework)
-                send_message(bot, f'Новый статус домашки - {homework_status}')
+                print(homework_status)
+                if homework_status != previous_homework_status:
+                    send_message(bot, homework_status)
+                    previous_homework_status = homework_status
             else:
-                send_message(bot, 'Нет нового статуса домашки')
+                homework_status = 'Нет нового статуса домашки'
+                logger.debug('Нет новых статусов')
+                if homework_status != previous_homework_status:
+                    send_message(bot, homework_status)
+                    previous_homework_status = homework_status
+            #     send_message(bot, f'Новый статус домашки - {homework_status}')
+            # else:
+            #     send_message(bot, 'Нет нового статуса домашки')
 
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
