@@ -128,9 +128,6 @@ def main():
                 if homework_status != previous_homework_status:
                     send_message(bot, homework_status)
                     previous_homework_status = homework_status
-            #     send_message(bot, f'Новый статус домашки - {homework_status}')
-            # else:
-            #     send_message(bot, 'Нет нового статуса домашки')
 
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
