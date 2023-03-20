@@ -118,7 +118,6 @@ def main():
             if homework:
                 actual_homework = homework[0]
                 homework_status = parse_status(actual_homework)
-                print(homework_status)
                 if homework_status != previous_homework_status:
                     send_message(bot, homework_status)
                     previous_homework_status = homework_status
